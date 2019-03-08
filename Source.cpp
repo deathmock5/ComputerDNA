@@ -16,6 +16,7 @@
 
 #include "InstalledPrograms.h"
 #include "CPUID.h"
+#include "SHA1.h"
 
 using namespace std;
 
@@ -37,8 +38,16 @@ Helps prevent ban doging and mitigates unessisary bans.
 
 */
 
-wchar_t *convertCharArrayToLPCWSTR(const char* charArray)
-{
+std::string stringToSha1(const std::string& s) {
+	return sha1(s);
+}
+
+template<typename T1,typename T2>
+void printNucleotide(const T1& t1,const T2& t2) {
+	std::cout << stringToSha1(t1) << "-" << stringToSha1(t2) << std::endl;
+}
+
+wchar_t *convertCharArrayToLPCWSTR(const char* charArray){
 	wchar_t* wString = new wchar_t[4096];
 	MultiByteToWideChar(CP_ACP, 0, charArray, -1, wString, 4096);
 	return wString;
@@ -48,7 +57,8 @@ void installedProgramUnique() {
 	vector<Software>* list = InstalledPrograms::GetInstalledPrograms(false);
 	for (vector<Software>::iterator iter = list->begin(); iter != list->end(); iter++)
 	{
-		wcout << iter->DisplayName << L"  " << iter->Version << L"  " << endl;
+		printNucleotide(std::string(iter->DisplayName.begin(), iter->DisplayName.end()), std::string(iter->Version.begin(),iter->Version.end()));
+		//wcout << iter->DisplayName << L"  " << iter->Version << L"  " << endl;
 	}
 }
 void volumeInformationUnique() {
@@ -362,13 +372,13 @@ void driverInformationUnique() {
 // Main
 int main() {
 	installedProgramUnique();
-	//volumeInformationUnique();
-	//hardwareInformationUnique();
-	//networkInformationUnique();
-	//systemInformationUnique();
-	//osInformationUnique();
-	//cpuInformationUnique();
-	//driverInformationUnique();
+	volumeInformationUnique();
+	hardwareInformationUnique();
+	networkInformationUnique();
+	systemInformationUnique();
+	osInformationUnique();
+	cpuInformationUnique();
+	driverInformationUnique();
 	
 	system("pause");
 	return EXIT_SUCCESS;
